@@ -1,10 +1,8 @@
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import messagebox
-if __name__ == "__main__":
-    import RecordsDB as dbApi
-else:
-    import RecordsDB as dbApi
+import RecordsDB as dbApi
+
 
 
 class SubmitGUI:
