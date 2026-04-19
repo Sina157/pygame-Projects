@@ -1,0 +1,43 @@
+name: Download YouTube Vide
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'https://www.youtube.com/watch?v=brgqKT-XNCA'
+        required: true
+        type: string
+      filename:
+        description: 'Output filename (without extension)'
+        required: true
+        type: string
+        default: 'video'
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+        
+      - name: Download video
+        run: |
+          yt-dlp -f "best[height<=720]" \
+            -o "${{ github.event.inputs.filename }}.%(ext)s" \
+            "${{ github.event.inputs.url }}"
+            
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add *.mp4 *.webm *.mkv
+          git commit -m "Add video: ${{ github.event.inputs.filename }}" || echo "No changes to commit"
+          git push
